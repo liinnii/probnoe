@@ -1,0 +1,494 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Пробное занятие ОГЭ (ученица)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;800&family=Marck+Script&display=swap">
+<style>
+/* Layout: страница-тетрадь в клетку. Слева поле с минутами урока, синяя линия поля, справа задания. */
+:root {
+  --paper: #F8FAFE;
+  --card: #FFFFFF;
+  --ink: #0B1A3D;
+  --muted: #4A5F90;
+  --grid: #E6EDFA;
+  --line: #BCD3F8;
+  --margin: #759BD9;
+  --pen: #2A4784;
+  --ok: #167A63;
+  --ok-bg: #E2F5F0;
+  --bad: #C0384E;
+  --bad-bg: #FCE9EC;
+  --accent: #2A4784;
+  --accent-ink: #FFFFFF;
+  color-scheme: light;
+  --font-body: 'Golos Text', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-pen: 'Marck Script', 'Segoe Script', 'Bradley Hand', cursive;
+}
+
+* { box-sizing: border-box; }
+body {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+}
+h1, h2, h3, p, ol, ul { margin: 0; }
+h1, h2, h3 { text-wrap: balance; line-height: 1.15; letter-spacing: -0.01em; }
+a { color: var(--accent); }
+button { font-family: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+.wrap { max-width: 980px; margin-inline: auto; padding-inline: 16px; }
+
+/* Лента с таймером */
+.bar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+.bar .wrap { display: flex; align-items: center; gap: 12px; padding-block: 10px; flex-wrap: wrap; }
+.bar-stage { flex: 1 1 12rem; min-width: 0; font-weight: 600; font-size: 0.95rem; }
+.bar-stage small { display: block; color: var(--muted); font-weight: 400; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; }
+.clock { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 1.15rem; }
+.clock.over { color: var(--bad); }
+.btn {
+  appearance: none; cursor: pointer; border-radius: 8px; padding: 9px 16px; font-size: 0.95rem; font-weight: 600;
+  border: 1.5px solid var(--accent); background: var(--accent); color: var(--accent-ink);
+}
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn:disabled { opacity: 0.45; cursor: default; }
+
+/* Шапка */
+.hero { padding-block: 3rem 1.5rem; display: grid; gap: 1.25rem; }
+.eyebrow { font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+h1 { font-size: clamp(2.3rem, 8vw, 4rem); font-weight: 800; }
+h1 em { font-style: normal; text-decoration: underline wavy var(--pen) 2px; text-underline-offset: 0.14em; }
+.meta { font-size: 1.1rem; font-weight: 500; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; }
+.facts li { border: 1px solid var(--line); background: var(--card); border-radius: 6px; padding: 4px 12px; font-size: 0.9rem; }
+.pen { font-family: var(--font-pen); color: var(--pen); font-size: 1.5rem; line-height: 1.3; }
+.agenda { display: grid; gap: 6px; list-style: none; padding: 0; margin-top: 0.5rem; max-width: 34rem; }
+.agenda a { display: grid; grid-template-columns: 5rem minmax(0, 1fr); gap: 12px; padding: 8px 12px; text-decoration: none; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 6px; }
+.agenda a:hover { border-color: var(--accent); }
+.agenda b { font-variant-numeric: tabular-nums; color: var(--muted); font-weight: 600; }
+
+/* Этапы */
+.stage { display: grid; grid-template-columns: 6rem minmax(0, 1fr); gap: 0 1.75rem; padding-block: 2.75rem; scroll-margin-top: 4.5rem; }
+.mins { font-weight: 800; font-size: 1.5rem; line-height: 1.1; color: var(--muted); font-variant-numeric: tabular-nums; padding-top: 0.2rem; }
+.mins small { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px; }
+.stage.now .mins { color: var(--accent); }
+.body { min-width: 0; border-left: 2px solid var(--margin); padding-left: 1.75rem; display: grid; gap: 1.25rem; align-content: start; }
+h2 { font-size: clamp(1.6rem, 4.5vw, 2.2rem); font-weight: 800; }
+.lead { max-width: 40rem; }
+.note { font-size: 0.95rem; color: var(--muted); max-width: 40rem; }
+
+/* Поля знакомства */
+.fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 14px; }
+.field { display: grid; gap: 6px; font-size: 0.9rem; font-weight: 600; }
+.field input, .field select {
+  font: inherit; font-weight: 500; padding: 10px 12px; border-radius: 8px;
+  border: 1.5px solid var(--line); background: var(--card); color: var(--ink); min-width: 0; width: 100%;
+}
+.talk { list-style: none; padding: 0; display: grid; gap: 8px; max-width: 40rem; }
+.talk li { padding-left: 1.4rem; position: relative; }
+.talk li::before { content: ''; position: absolute; left: 0; top: 0.75em; width: 0.7rem; height: 2px; background: var(--pen); }
+
+/* Диагностика */
+.qs { display: grid; gap: 16px; }
+.q { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 12px; }
+.q h3 { font-size: 1.1rem; font-weight: 600; letter-spacing: 0; }
+.q h3 span { color: var(--muted); font-weight: 500; font-size: 0.85rem; display: block; margin-bottom: 4px; letter-spacing: 0.06em; text-transform: uppercase; }
+.opts { display: grid; gap: 8px; }
+.opt { text-align: left; cursor: pointer; font-size: 1rem; padding: 10px 14px; border-radius: 8px; border: 1.5px solid var(--line); background: transparent; width: 100%; }
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt.correct { border-color: var(--ok); background: var(--ok-bg); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-bg); }
+.opt:disabled { cursor: default; }
+.opt.dim { opacity: 0.6; }
+.why { font-size: 0.95rem; padding: 12px 14px; border-radius: 8px; background: var(--paper); border: 1px dashed var(--line); }
+.score { font-weight: 600; }
+
+/* Разбор: подлежащее и сказуемое */
+.subj { border-bottom: 2px solid currentColor; }
+.pred { border-bottom: 4px double currentColor; }
+.comma { color: var(--pen); font-weight: 800; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 0.95rem; }
+.ex-list { display: grid; gap: 12px; }
+.ex { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 6px; }
+.ex p.s { font-size: 1.15rem; line-height: 1.9; }
+.tag { justify-self: start; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--muted); }
+.steps { padding-left: 1.4rem; display: grid; gap: 8px; max-width: 40rem; }
+.steps li::marker { color: var(--pen); font-weight: 800; }
+
+/* Практика */
+.sents { display: grid; gap: 14px; }
+.sent { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px 16px; display: grid; gap: 8px; }
+.sent-line { font-size: 1.2rem; line-height: 2.1; }
+.gap {
+  appearance: none; border: 0; background: transparent; cursor: pointer; padding: 0 0.28em; margin: 0;
+  min-width: 0.9em; height: 1.7em; vertical-align: baseline; font-family: var(--font-pen); font-size: 1.5rem; line-height: 1; color: var(--pen);
+  border-bottom: 1.5px dotted var(--line);
+}
+.gap:hover { border-bottom-color: var(--pen); }
+.sent.checked .gap { cursor: default; }
+.result { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; min-height: 1.6rem; }
+.chip { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 10px; border-radius: 4px; }
+.chip.ok { background: var(--ok-bg); color: var(--ok); }
+.chip.bad { background: var(--bad-bg); color: var(--bad); }
+.fix { font-family: var(--font-pen); color: var(--pen); font-size: 1.35rem; line-height: 1.3; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+/* Итоги */
+.summary { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 8px; }
+.summary h3 { font-size: 1.1rem; }
+.plan { list-style: none; padding: 0; display: grid; gap: 8px; }
+.plan li { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 12px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
+.plan b { font-variant-numeric: tabular-nums; }
+.plan li.today { border-color: var(--accent); }
+.about { display: grid; gap: 6px; max-width: 40rem; }
+footer { padding-block: 2rem 4rem; }
+footer .wrap { color: var(--muted); font-size: 0.9rem; }
+
+@media (max-width: 720px) {
+  .stage { grid-template-columns: minmax(0, 1fr); gap: 12px; padding-block: 2.25rem; }
+  .mins { display: flex; align-items: baseline; gap: 10px; }
+  .mins small { margin-top: 0; }
+  .body { border-left: 0; padding-left: 0; }
+  body { font-size: 16px; }
+  .plan li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+
+/* Дополнения: карта заданий, срез, письменные, план */
+:root { --warn: #9A6200; --warn-bg: #FDF1D6; }
+.facts li.key { border-color: var(--accent); }
+
+.map, .st { display: grid; gap: 8px; }
+.mrow { display: grid; grid-template-columns: 2.2rem minmax(0, 1fr) 10rem; gap: 12px; align-items: center; padding: 10px 14px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; }
+.mn { font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; font-size: 1.15rem; }
+.mt b { display: block; font-weight: 600; }
+.mt span { display: block; font-size: 0.9rem; color: var(--muted); line-height: 1.4; }
+.mrow select, .rate select { font: inherit; font-size: 0.95rem; padding: 8px 10px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); width: 100%; min-width: 0; }
+
+.srow { display: grid; grid-template-columns: 2.2rem minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 8px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
+.srow small { display: block; color: var(--muted); font-size: 0.82rem; }
+.chip.warn { background: var(--warn-bg); color: var(--warn); }
+.chip.mute { background: var(--grid); color: var(--muted); }
+
+.src { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--margin); border-radius: 8px; padding: 14px 16px; max-width: 42rem; }
+.q details { font-size: 0.95rem; }
+.q summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+.q details p { margin-top: 8px; }
+.wcard { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 12px; }
+.wcard h3 { font-size: 1.1rem; font-weight: 600; letter-spacing: 0; }
+.wcard h3 span { color: var(--muted); font-weight: 500; font-size: 0.85rem; display: block; margin-bottom: 4px; letter-spacing: 0.06em; text-transform: uppercase; }
+.ta { font: inherit; width: 100%; min-height: 6rem; padding: 10px 12px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); resize: vertical; }
+.crit { padding-left: 1.2rem; display: grid; gap: 4px; font-size: 0.95rem; color: var(--muted); }
+.rate { display: grid; gap: 6px; font-size: 0.9rem; font-weight: 600; max-width: 22rem; }
+
+.chk { display: flex; gap: 8px; align-items: center; font-size: 0.95rem; font-weight: 500; }
+.chk input { width: 1.1rem; height: 1.1rem; }
+.plan li.ph { display: block; border: 0; background: transparent; padding: 14px 0 2px; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--muted); }
+.plan li.mock { border-style: dashed; }
+.pt { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-left: 8px; }
+.plan li { grid-template-columns: 8rem minmax(0, 1fr); }
+.plan li span small { display: block; color: var(--muted); font-size: 0.9rem; }
+
+@media (max-width: 720px) {
+  .mrow { grid-template-columns: 2rem minmax(0, 1fr); }
+  .mrow select { grid-column: 1 / -1; }
+  .plan li { grid-template-columns: minmax(0, 1fr); }
+  .plan li.ph { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Вариант для ученицы */
+.ta.short { min-height: 4.5rem; }
+.ta.tall { min-height: 11rem; }
+.field .ta { font-weight: 400; }
+.opt.sel { border-color: var(--accent); background: #E8EEFB; font-weight: 600; }
+.mrow.plain { grid-template-columns: 2.2rem minmax(0, 1fr); }
+.done { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px; max-width: 40rem; display: grid; gap: 8px; }
+</style>
+
+<div class="bar">
+  <div class="wrap">
+    <div class="bar-stage"><small>Сейчас</small><span id="barStage">Занятие не начато</span></div>
+    <div class="clock" id="clock" aria-live="off">00:00 / 45:00</div>
+    <button class="btn" id="tgl" type="button">Старт</button>
+    <button class="btn ghost" id="rst" type="button">Сначала</button>
+  </div>
+</div>
+
+<header class="wrap hero">
+  <p class="eyebrow">Русский язык · ОГЭ · 9 класс</p>
+  <h1>Пробное <em>занятие</em></h1>
+  <p class="meta">Среда, 14 октября, 18:00 · 45 минут · онлайн в Телемосте</p>
+  <ul class="facts">
+    <li>Бесплатно</li>
+    <li>Камера необязательна</li>
+    <li>Ведёт Мария Евгеньевна Семилетова</li>
+    <li>Это не контрольная: отметок не будет</li>
+  </ul>
+  <p class="pen">Цель на сегодня: понять, что у тебя уже получается, а над чем стоит поработать.</p>
+  <ol class="agenda">
+    <li><a href="#s1"><b>0–5′</b><span>Знакомство</span></a></li>
+    <li><a href="#s2"><b>5–10′</b><span>Из чего состоит ОГЭ</span></a></li>
+    <li><a href="#s3"><b>10–29′</b><span>Тест: задания 2–12</span></a></li>
+    <li><a href="#s4"><b>29–40′</b><span>Письменные: изложение и сочинение</span></a></li>
+    <li><a href="#s5"><b>40–45′</b><span>Итоги</span></a></li>
+  </ol>
+</header>
+
+<main class="wrap">
+
+  <section class="stage" id="s1" data-start="0" data-name="Знакомство">
+    <div class="mins">0–5′<small>минут</small></div>
+    <div class="body">
+      <h2>Знакомство</h2>
+      <p class="lead">Сначала мы немного поговорим. Это нужно, чтобы занятия подстроить под тебя, а не вести по общей программе.</p>
+      <ul class="talk">
+        <li>Как прошёл пробник и какие задания показались самыми трудными.</li>
+        <li>Что нравится в русском языке, а что хочется обходить стороной.</li>
+        <li>Какая оценка тебе нужна на ОГЭ и для чего.</li>
+      </ul>
+      <div class="fields">
+        <label class="field" for="fName">Как тебя зовут?
+          <input id="fName" type="text" autocomplete="off" placeholder="Например, Аня">
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <section class="stage" id="s2" data-start="5" data-name="Из чего состоит ОГЭ">
+    <div class="mins">5–10′<small>минут</small></div>
+    <div class="body">
+      <h2>Из чего состоит ОГЭ</h2>
+      <p class="lead">В работе 13 заданий и 37 первичных баллов. Посмотри на список и подумай, какие из них даются тебе легко, а какие нет. Мы обсудим это вместе.</p>
+      <div class="map" id="map"></div>
+      <p class="note">Баллы: сжатое изложение 6, задания 2–12 по 1, сочинение 7 и грамотность с фактической точностью речи 13 (их оценивают по изложению и сочинению вместе). Итого 37.</p>
+    </div>
+  </section>
+
+  <section class="stage" id="s3" data-start="10" data-name="Тест: задания 2–12">
+    <div class="mins">10–29′<small>минут</small></div>
+    <div class="body">
+      <h2>Тест: задания 2–12</h2>
+      <p class="lead">По одному вопросу на каждое задание второй части. В каждом нужно выбрать один ответ из четырёх. Подсказок во время теста не будет, на вопрос уходит меньше двух минут. Пока не закончила, ответ можно поменять.</p>
+      <div class="qs" id="qs"></div>
+      <p class="score" id="dscore">Отвечено: 0 из 11</p>
+    </div>
+  </section>
+
+  <section class="stage" id="s4" data-start="29" data-name="Письменные: изложение и сочинение">
+    <div class="mins">29–40′<small>минут</small></div>
+    <div class="body">
+      <h2>Письменные: изложение и сочинение</h2>
+      <p class="lead">Два коротких письменных задания. Сначала изложение: ты слушаешь текст, потом пишешь. Потом сочинение по другому тексту, который будет у тебя перед глазами. Идеальный ответ не нужен, важно увидеть, как ты думаешь и пишешь.</p>
+
+      <div class="wcard">
+        <h3><span>Задание 1 · сжатое изложение</span>Послушай текст и напиши сжатое изложение.</h3>
+        <p class="note">Мария Евгеньевна дважды прочитает текст вслух. Пока слушаешь, записывай ключевые слова в черновик. Потом передай главное: убери подробности и примеры, ничего своего не добавляй. Сегодня текст короткий, поэтому хватит трёх-пяти предложений. На экзамене изложение должно быть не короче 70 слов.</p>
+        <label class="field" for="draft">Черновик для заметок (репетитору не отправляется)
+          <textarea class="ta short" id="draft" placeholder="Ключевые слова, пока звучит текст"></textarea>
+        </label>
+        <label class="field" for="ta1">Сжатое изложение
+          <textarea class="ta tall" id="ta1" placeholder="Напиши изложение здесь"></textarea>
+        </label>
+        <p class="note" id="wc1">Слов: 0</p>
+      </div>
+
+      <div class="wcard">
+        <h3><span>Задание 13 · сочинение-рассуждение</span>Тема: «В чём настоящий смысл чтения?» Напиши тезис и один пример из текста ниже.</h3>
+        <p class="src">Книги читают по-разному. Одни проглатывают страницу за страницей, торопясь узнать, чем всё закончится. Другие возвращаются к любимым строкам, перечитывают их и находят новое. Но настоящее чтение — это не скорость, а умение остановиться и подумать над прочитанным: без размышления даже самая захватывающая книга быстро забывается.</p>
+        <textarea class="ta" id="ta13" aria-label="Сочинение" placeholder="Твой ответ"></textarea>
+        <p class="note" id="wc13">Слов: 0</p>
+        <p class="note">На экзамене сочинение должно быть не короче 70 слов. Сегодня достаточно тезиса и одного примера.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="stage" id="s5" data-start="40" data-name="Итоги">
+    <div class="mins">40–45′<small>минут</small></div>
+    <div class="body">
+      <h2>Итоги</h2>
+      <div class="done">
+        <h3>Всё, ты справилась с проверкой</h3>
+        <p>Дальше мы вместе посмотрим ответы, разберём, где были ошибки и почему, и составим план занятий до экзамена: что повторять в первую очередь, а что только поддерживать.</p>
+        <p class="pen">Ошибки здесь нужны, чтобы понять, с чего начать.</p>
+      </div>
+      <div class="wcard" id="send">
+        <h3><span>Отправка</span>Отправь ответы репетитору</h3>
+        <p class="note">Нажми «Собрать ответы». Появится текст со всем, что ты сделала: скопируй его и отправь Марии Евгеньевне в мессенджере или на почту. Если доступна кнопка «Скачать файл», можно отправить файл.</p>
+        <div class="row">
+          <button class="btn" id="mk" type="button">Собрать ответы</button>
+          <button class="btn ghost" id="cp" type="button" disabled>Скопировать</button>
+          <button class="btn ghost" id="dl" type="button" disabled>Скачать файл</button>
+          <span class="note" id="sendMsg"></span>
+        </div>
+        <textarea class="ta" id="out" rows="9" readonly hidden aria-label="Собранные ответы"></textarea>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">Русский язык, ОГЭ. Пробное занятие бесплатно, 45 минут.</div></footer>
+
+<script>
+(function () {
+  'use strict';
+  var DATA = {"tasks":[{"n":1,"kind":"write","max":6,"short":"Сжатое изложение","what":"Прослушать текст и письменно передать главное."},{"n":2,"kind":"test","max":1,"short":"Грамматическая основа","what":"Найти верно выделенные подлежащее и сказуемое."},{"n":3,"kind":"test","max":1,"short":"Синтаксический анализ","what":"Выбрать верные утверждения о строении предложения."},{"n":4,"kind":"test","max":1,"short":"Пунктуационные правила","what":"Сопоставить правило и предложение-пример."},{"n":5,"kind":"test","max":1,"short":"Расстановка знаков","what":"Поставить запятые, тире, двоеточие в тексте."},{"n":6,"kind":"test","max":1,"short":"Объяснение орфограмм","what":"Выбрать верное объяснение написания слова."},{"n":7,"kind":"test","max":1,"short":"Вставить буквы","what":"Вставить пропущенные буквы и отобрать нужные."},{"n":8,"kind":"test","max":1,"short":"Грамматические нормы","what":"Поставить слово в нужную форму."},{"n":9,"kind":"test","max":1,"short":"Замена словосочетания","what":"Заменить тип связи: согласование, управление, примыкание."},{"n":10,"kind":"test","max":1,"short":"Содержание текста","what":"Отобрать утверждения, которые совпадают с текстом."},{"n":11,"kind":"test","max":1,"short":"Средства выразительности","what":"Узнать эпитет, метафору, сравнение и другие приёмы."},{"n":12,"kind":"test","max":1,"short":"Лексический анализ","what":"Найти слово или фразеологизм по значению, подобрать синоним."},{"n":13,"kind":"write","max":7,"short":"Сочинение-рассуждение","what":"Написать рассуждение на тему по тексту (13.1, 13.2 или 13.3)."}],"items":{"2":{"q":"Где верно выделена грамматическая основа в предложении «Язык — зеркало души народа»?","o":["язык — зеркало","язык души","зеркало народа","души народа"]},"3":{"q":"Какое утверждение верно для предложения «Ребята, не теряя времени, побежали к остановке»?","o":["Предложение сложное, в нём две грамматические основы.","Предложение осложнено обращением «ребята».","Предложение осложнено обособленным обстоятельством, выраженным деепричастным оборотом.","Предложение осложнено вводным словом."]},"4":{"q":"Какое правило объясняет запятую в предложении «Мама, ты не видела мои ключи?»","o":["Однородные члены предложения разделяются запятой.","Обращение выделяется запятыми.","Вводное слово выделяется запятыми.","Части сложносочинённого предложения разделяются запятой."]},"5":{"q":"Где нужна запятая: «Когда зазвенел звонок(1) ученики вышли в коридор(2) и начали обсуждать контрольную»?","o":["Только на месте 1","Только на месте 2","На местах 1 и 2","Запятые не нужны"]},"6":{"q":"В каком слове верно объяснено написание?","o":["ПЕСЧАНЫЙ (берег): пишется НН, потому что слово образовано от основы на Н.","СТЕКЛЯННЫЙ (стакан): пишется НН, потому что слово входит в перечень исключений.","СВАРЕНЫ (овощи): пишется НН, потому что это краткое причастие.","ВЕТРЕНЫЙ (день): пишется НН, потому что есть суффикс -ЕНН-."]},"7":{"q":"В каком слове на месте пропуска пишется буква Е?","o":["зап..рать (дверь)","выд..рать (сорняки)","расст..лить (скатерть)","ум..рать (от смеха)"]},"8":{"q":"В каком варианте верно образована форма степени сравнения?","o":["более выше","самый красивейший","наиболее простой","более красивее"]},"9":{"q":"Замените словосочетание «уши зайца» (управление) синонимичным со связью согласование.","o":["заячьи уши","ушастый заяц","заяц с ушами","ушки зайчика"]},"10":{"q":"Какое утверждение соответствует содержанию текста?","o":["Матвей ловил рыбу, чтобы прокормить большую семью.","Матвей выходил на реку рано, потому что ему нравилось «слушать» реку.","Рыбаки завидовали большим уловам Матвея.","Матвей не стал отвечать на вопрос о ранних выходах."],"text":"Старый лодочник Матвей каждое утро выходил на реку задолго до рассвета. Рыбаки удивлялись: уловы у него бывали скромные, а работал он как будто ради самого удовольствия. Однажды Матвея спросили, зачем он встаёт в такую рань. Он ответил, что в этот час река разговаривает с тем, кто умеет слушать."},"11":{"q":"В каком предложении есть олицетворение?","o":["Дождь шёл всю ночь.","Ветер шептал в листве старые сказки.","Лицо у него пылало, как огонь.","Вечером мы пили чай на веранде."]},"12":{"q":"Что означает устаревшее слово «ланиты» в предложении «Румянец заиграл на её ланитах»?","o":["щёки","брови","плечи","ресницы"]}}};
+  var TASKS = DATA.tasks, ITEMS = DATA.items;
+  var ans = {};
+
+  function $(id) { return document.getElementById(id); }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+  function ptsText(m) { return m + ' ' + (m === 1 ? 'балл' : (m < 5 ? 'балла' : 'баллов')); }
+
+  TASKS.forEach(function (t) {
+    var row = el('div', 'mrow plain');
+    row.appendChild(el('div', 'mn', String(t.n)));
+    var mt = el('div', 'mt');
+    mt.appendChild(el('b', '', t.short));
+    mt.appendChild(el('span', '', t.what + ' · ' + ptsText(t.max)));
+    row.appendChild(mt);
+    $('map').appendChild(row);
+  });
+
+  function updateScore() {
+    $('dscore').textContent = 'Отвечено: ' + Object.keys(ans).length + ' из 11';
+  }
+
+  TASKS.filter(function (t) { return t.kind === 'test'; }).forEach(function (t) {
+    var item = ITEMS[t.n];
+    var card = el('div', 'q');
+    var h = el('h3');
+    h.appendChild(el('span', '', 'Задание ' + t.n + ' · ' + t.short));
+    h.appendChild(document.createTextNode(item.q));
+    card.appendChild(h);
+    if (item.text) card.appendChild(el('p', 'src', item.text));
+    var opts = el('div', 'opts');
+    var btns = [];
+    item.o.forEach(function (text, oi) {
+      var b = el('button', 'opt', text);
+      b.type = 'button';
+      b.setAttribute('aria-pressed', 'false');
+      b.addEventListener('click', function () {
+        ans[t.n] = oi;
+        btns.forEach(function (x, xi) {
+          x.classList.toggle('sel', xi === oi);
+          x.setAttribute('aria-pressed', xi === oi ? 'true' : 'false');
+        });
+        updateScore();
+      });
+      btns.push(b);
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+    $('qs').appendChild(card);
+  });
+
+  /* ---------- Отправка ответов ---------- */
+  function buildMessage() {
+    var name = $('fName').value.trim();
+    var w1 = $('ta1').value.trim(), w13 = $('ta13').value.trim();
+    var lines = ['Ответы на пробное занятие ОГЭ (русский язык)', 'Имя: ' + (name || 'не указано'), '', 'Тест:'];
+    TASKS.filter(function (t) { return t.kind === 'test'; }).forEach(function (t) {
+      lines.push('Задание ' + t.n + ': ' + (ans[t.n] === undefined ? 'не ответила' : ITEMS[t.n].o[ans[t.n]]));
+    });
+    lines.push('', 'Сжатое изложение:', w1 || '(пусто)', '', 'Сочинение:', w13 || '(пусто)', '');
+    var json = JSON.stringify({ v: 1, name: name, ans: ans, w1: w1, w13: w13 });
+    lines.push('Код для загрузки: ОГЭ1[' + btoa(unescape(encodeURIComponent(json))) + ']');
+    return lines.join('\n');
+  }
+  var outEl = $('out'), sendMsg = $('sendMsg');
+  $('mk').addEventListener('click', function () {
+    outEl.value = buildMessage();
+    outEl.hidden = false;
+    $('cp').disabled = false;
+    $('dl').disabled = false;
+    var left = 11 - Object.keys(ans).length;
+    sendMsg.textContent = left ? 'Пропущено вопросов в тесте: ' + left + '. Их можно дополнить и собрать заново.' : 'Всё собрано.';
+  });
+  $('cp').addEventListener('click', function () {
+    function ok() { sendMsg.textContent = 'Скопировано. Теперь отправь это сообщение репетитору.'; }
+    function fail() { outEl.focus(); outEl.select(); sendMsg.textContent = 'Выдели текст и скопируй его вручную.'; }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(outEl.value).then(ok, fail);
+    else { outEl.select(); try { document.execCommand('copy') ? ok() : fail(); } catch (e) { fail(); } }
+  });
+  var dlBtn = $('dl');
+  var dlApi = null;
+  dlBtn.hidden = true;
+  if (window.claude && typeof window.claude.use === 'function') {
+    window.claude.use('downloads').then(function (d) { dlApi = d || null; dlBtn.hidden = !dlApi; }, function () {});
+  }
+  dlBtn.addEventListener('click', function () {
+    if (!dlApi) return;
+    dlApi.save({ filename: 'ответы-ОГЭ.txt', data: outEl.value }).then(
+      function () { sendMsg.textContent = 'Файл сохранён. Отправь его репетитору.'; },
+      function () { sendMsg.textContent = 'Файл не сохранён. Скопируй текст и отправь его сообщением.'; }
+    );
+  });
+
+  /* ---------- Счётчик слов ---------- */
+  function wordCount(s) { var m = (s || '').trim().match(/\S+/g); return m ? m.length : 0; }
+  [['ta1', 'wc1'], ['ta13', 'wc13']].forEach(function (p) {
+    var ta = $(p[0]), out = $(p[1]);
+    function upd() { out.textContent = 'Слов: ' + wordCount(ta.value); }
+    ta.addEventListener('input', upd);
+    upd();
+  });
+
+  /* ---------- Таймер урока ---------- */
+  var TOTAL = 45 * 60;
+  var elapsed = 0, timer = null;
+  var clock = $('clock');
+  var barStage = $('barStage');
+  var tgl = $('tgl');
+  var stages = Array.prototype.slice.call(document.querySelectorAll('.stage'));
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function render() {
+    var over = elapsed > TOTAL;
+    var shown = over ? elapsed - TOTAL : elapsed;
+    clock.textContent = (over ? '+' : '') + pad(Math.floor(shown / 60)) + ':' + pad(shown % 60) + ' / 45:00';
+    clock.className = 'clock' + (over ? ' over' : '');
+    var current = null;
+    stages.forEach(function (s) {
+      var st = Number(s.getAttribute('data-start')) * 60;
+      if (elapsed >= st) current = s;
+      s.classList.remove('now');
+    });
+    if (timer !== null || elapsed > 0) {
+      if (current) { current.classList.add('now'); barStage.textContent = current.getAttribute('data-name'); }
+    } else {
+      barStage.textContent = 'Занятие не начато';
+    }
+    if (over) barStage.textContent = 'Время вышло, подводим итоги';
+  }
+  function tick() { elapsed++; render(); }
+  tgl.addEventListener('click', function () {
+    if (timer === null) { timer = setInterval(tick, 1000); tgl.textContent = 'Пауза'; }
+    else { clearInterval(timer); timer = null; tgl.textContent = 'Продолжить'; }
+    render();
+  });
+  $('rst').addEventListener('click', function () {
+    if (timer !== null) { clearInterval(timer); timer = null; }
+    elapsed = 0; tgl.textContent = 'Старт'; render();
+  });
+
+  updateScore();
+  render();
+})();
+</script>
+
+</body></html>
